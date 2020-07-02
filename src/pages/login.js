@@ -16,7 +16,7 @@ function LoginPage() {
   const classes = useLoginPageStyles();
 
   return (
-    <>
+    <React.Fragment>
       <SEO title="Login" />
       <section className={classes.section}>
         <article>
@@ -76,7 +76,7 @@ function LoginPage() {
           </Card>
         </article>
       </section>
-    </>
+    </React.Fragment>
   );
 }
 
