@@ -1,4 +1,4 @@
-# instagram-react12
+# Instagram App
 
 ## Routes (Pages)
 
