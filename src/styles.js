@@ -243,7 +243,7 @@ export const useNavbarStyles = makeStyles(theme => ({
       marginRight: 22
     }
   },
-  resultContainer: { width: 215 },
+  resultContainer: { width: 215, },
   resultWrapper: {
     display: "flex",
     alignItems: "center",
@@ -343,6 +343,7 @@ export const useNavbarStyles = makeStyles(theme => ({
   },
   resultLink: {
     background: "#fafafa",
+    cursor: "pointer",
     width: "100%",
     borderBottom: "solid 1px rgba(var(--b38,219,219,219),1)",
     "&:hover": {
@@ -516,10 +517,6 @@ export const useFeedPostStyles = makeStyles(theme => ({
   },
   image: {
     width: "100%",
-
-    
-    height: 500,
-    objectFit: "cover"
     },
   postButtons: {
     display: "grid",
