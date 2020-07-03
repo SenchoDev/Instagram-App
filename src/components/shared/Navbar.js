@@ -24,24 +24,34 @@ import {
   HomeActiveIcon,
 } from "../../icons";
 import NotificationList from "../notification/NotificationList";
+import { useNProgress } from "@tanem/react-nprogress";
 
 function Navbar({ minimalNavbar }) {
   const classes = useNavbarStyles();
   const history = useHistory();
+  const [isLoadingPage, setLoadingPage] = React.useState(true);
   const path = history.location.pathname;
 
+  React.useEffect(() => {
+    setLoadingPage(false)
+    
+  }, [path]);
+
   return (
-    <AppBar className={classes.appBar}>
-      <section className={classes.section}>
-        <Logo />
-        {!minimalNavbar && (
-          <React.Fragment>
-            <Search history={history} />
-            <Links path={path} />
-          </React.Fragment>
-        )}
-      </section>
-    </AppBar>
+    <React.Fragment>
+      <Progress isAnimating={isLoadingPage} />
+      <AppBar className={classes.appBar}>
+        <section className={classes.section}>
+          <Logo />
+          {!minimalNavbar && (
+            <React.Fragment>
+              <Search history={history} />
+              <Links path={path} />
+            </React.Fragment>
+          )}
+        </section>
+      </AppBar>
+    </React.Fragment>
   );
 }
 
@@ -137,11 +147,11 @@ function Links({ path }) {
   const [showTooltip, setTooltip] = React.useState(true);
 
   React.useEffect(() => {
-    const timeout = setTimeout(handleHideTooltip, 5000)
+    const timeout = setTimeout(handleHideTooltip, 5000);
     return () => {
       clearTimeout(timeout);
-    }
-  }, [])
+    };
+  }, []);
 
   function handleToggleList() {
     setList((prev) => !prev);
@@ -157,7 +167,7 @@ function Links({ path }) {
 
   return (
     <div className={classes.linksContainer}>
-      {showList && <NotificationList handleHideList={handleHideList}/>}
+      {showList && <NotificationList handleHideList={handleHideList} />}
       <div className={classes.linksWrapper}>
         <Hidden xsDown>
           <AddIcon />
@@ -190,6 +200,31 @@ function Links({ path }) {
           />
         </Link>
       </div>
+    </div>
+  );
+}
+
+function Progress({ isAnimating }) {
+  const classes = useNavbarStyles();
+  const { animationDuration, isFinished, progress } = useNProgress({
+    isAnimating,
+  });
+
+  return (
+    <div
+      className={classes.progressContainer}
+      style={{
+        opacity: isFinished ? 0 : 1,
+        transition: `opacity ${animationDuration}ms linear`,
+      }}
+    >
+      <div className={classes.progressBar} style={{
+        marginLeft: `${(-1 + progress) * 100}%`,
+        transition: `margin-left ${animationDuration}ms linear`
+      }}>
+        <div className={classes.progressBackground}/>
+      </div>
+    
     </div>
   );
 }
