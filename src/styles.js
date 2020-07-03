@@ -515,8 +515,12 @@ export const useFeedPostStyles = makeStyles(theme => ({
     }
   },
   image: {
-    width: "100%"
-  },
+    width: "100%",
+
+    
+    height: 500,
+    objectFit: "cover"
+    },
   postButtons: {
     display: "grid",
     gridAutoFlow: "column",
