@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavbarStyles, WhiteTooltip } from "../../styles";
+import { useNavbarStyles, WhiteTooltip, RedTooltip } from "../../styles";
 import {
   AppBar,
   Hidden,
@@ -9,6 +9,7 @@ import {
   Fade,
   Typography,
 } from "@material-ui/core";
+import NotificationTooltip from "../notification/NotificationTooltip";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logo.png";
 import { defaultCurrentUser, getDefaultUser } from "../../data";
@@ -83,8 +84,11 @@ function Search({ history }) {
         title={
           hasResults && (
             <Grid className={classes.resultContainer} conntainer>
-              {results.map(result => (
-                <Grid item key={result.id} className={classes.resultLink}
+              {results.map((result) => (
+                <Grid
+                  item
+                  key={result.id}
+                  className={classes.resultLink}
                   onClick={() => {
                     history.push(`/${result.username}`);
                     handleClearInput();
@@ -92,12 +96,10 @@ function Search({ history }) {
                 >
                   <div className={classes.resultWrapper}>
                     <div className={classes.avatarWrapper}>
-                      <Avatar src={result.profile_image} alt="user avatar"/>
+                      <Avatar src={result.profile_image} alt="user avatar" />
                     </div>
                     <div className={classes.nameWrapper}>
-                      <Typography varaint="body1">
-                        {result.username}
-                      </Typography>
+                      <Typography varaint="body1">{result.username}</Typography>
                       <Typography varaint="body2" color="textSecondary">
                         {result.name}
                       </Typography>
@@ -131,9 +133,14 @@ function Search({ history }) {
 function Links({ path }) {
   const classes = useNavbarStyles();
   const [showList, setList] = React.useState(false);
+  const [showTooltip, setTooltip] = React.useState(true);
 
   function handleToggleList() {
     setList((prev) => !prev);
+  }
+
+  function handleHideTooltip() {
+    setTooltip(false);
   }
 
   return (
@@ -146,9 +153,16 @@ function Links({ path }) {
         <Link to="/explore">
           {path === "/explore" ? <ExploreActiveIcon /> : <ExploreIcon />}
         </Link>
-        <div className={classes.notifications} onClick={handleToggleList}>
-          {showList ? <LikeActiveIcon /> : <LikeIcon />}
-        </div>
+        <RedTooltip
+          arrow
+          open={showTooltip}
+          onOpen={handleHideTooltip}
+          title={<NotificationTooltip />}
+        >
+          <div className={classes.notifications} onClick={handleToggleList}>
+            {showList ? <LikeActiveIcon /> : <LikeIcon />}
+          </div>
+        </RedTooltip>
         <Link to={`/${defaultCurrentUser.username}`}>
           <div
             className={
