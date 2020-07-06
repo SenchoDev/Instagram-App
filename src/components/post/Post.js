@@ -109,12 +109,12 @@ function LikeButton() {
   const onClick = liked ? handleUnlike : handleLike;
 
   function handleLike() {
-    console.log("like");
+    
     setLiked(true);
   }
 
   function handleUnlike() {
-    console.log("unlike");
+   
     setLiked(false);
   }
 
