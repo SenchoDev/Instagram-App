@@ -20,7 +20,7 @@ import {
 } from "@material-ui/core";
 import OptionsDialog from "../shared/OptionsDialog";
 import { defaultPost } from "../../data";
-import PostSkeleton from './PostSkeleton'
+import PostSkeleton from './PostSkeleton';
 
 function Post() {
   const classes = usePostStyles();
