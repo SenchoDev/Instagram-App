@@ -72,7 +72,7 @@ function Logo() {
 function Search({ history }) {
   const classes = useNavbarStyles();
   const [results, setResults] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [loading] = React.useState(false);
   const [query, setQuery] = React.useState("");
 
   const hasResults = Boolean(query) && results.length > 0;

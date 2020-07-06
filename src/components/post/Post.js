@@ -8,7 +8,7 @@ import {
   UnlikeIcon,
   LikeIcon,
   RemoveIcon,
-  SaveIcon,
+  SaveIcon
 } from "../../icons";
 import { Link } from "react-router-dom";
 import {
@@ -16,22 +16,20 @@ import {
   Button,
   Hidden,
   Divider,
-  TextField,
+  TextField
 } from "@material-ui/core";
-import FollowSuggestions from "../shared/FollowSuggestions";
 import OptionsDialog from "../shared/OptionsDialog";
 import { defaultPost } from "../../data";
 
 function Post() {
   const classes = usePostStyles();
-
   const [showOptionsDialog, setOptionsDialog] = React.useState(false);
   const { id, media, likes, user, caption, comments } = defaultPost;
 
   return (
     <div className={classes.postContainer}>
       <article className={classes.article}>
-        {/*Post Header */}
+        {/* Post Header */}
         <div className={classes.postHeader}>
           <UserCard user={user} avatarSize={32} />
           <MoreIcon
@@ -63,7 +61,7 @@ function Post() {
               className={classes.postCaption}
               dangerouslySetInnerHTML={{ __html: caption }}
             />
-            {comments.map((comment) => (
+            {comments.map(comment => (
               <div key={comment.id}>
                 <Link to={`/${comment.user.username}`}>
                   <Typography
@@ -84,12 +82,13 @@ function Post() {
             5 DAYS AGO
           </Typography>
           <Hidden xsDown>
-            <Divider />
-            <Comment />
+            <div className={classes.comment}>
+              <Divider />
+              <Comment />
+            </div>
           </Hidden>
         </div>
       </article>
-      
       {showOptionsDialog && (
         <OptionsDialog onClose={() => setOptionsDialog(false)} />
       )}
@@ -98,7 +97,7 @@ function Post() {
 }
 
 function LikeButton() {
-  const classes = useFeedPostStyles();
+  const classes = usePostStyles();
   const [liked, setLiked] = React.useState(false);
   const Icon = liked ? UnlikeIcon : LikeIcon;
   const className = liked ? classes.liked : classes.like;
@@ -118,7 +117,7 @@ function LikeButton() {
 }
 
 function SaveButton() {
-  const classes = useFeedPostStyles();
+  const classes = usePostStyles();
   const [saved, setSaved] = React.useState(false);
   const Icon = saved ? RemoveIcon : SaveIcon;
   const onClick = saved ? handleRemove : handleSave;
@@ -137,7 +136,7 @@ function SaveButton() {
 }
 
 function Comment() {
-  const classes = useFeedPostStyles();
+  const classes = usePostStyles();
   const [content, setContent] = React.useState("");
 
   return (
@@ -149,13 +148,13 @@ function Comment() {
         multiline
         rowsMax={2}
         rows={1}
-        onChange={(event) => setContent(event.target.value)}
+        onChange={event => setContent(event.target.value)}
         className={classes.textField}
         InputProps={{
           classes: {
             root: classes.root,
-            underline: classes.underline,
-          },
+            underline: classes.underline
+          }
         }}
       />
       <Button
@@ -169,4 +168,4 @@ function Comment() {
   );
 }
 
-export default FeedPost;
+export default Post;
