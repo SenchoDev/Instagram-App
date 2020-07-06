@@ -9,11 +9,11 @@ function FeedPostSkeleton() {
       <div className={classes.headerSkeleton}>
         <div className={classes.avatarSkeleton}/>
         <div className={classes.headerTextSkeleton}>
-          <div className={classes.primaryTextSkeleton}></div>
-          <div className={classes.secondaryTextSkeleton}></div>
+          <div className={classes.primaryTextSkeleton}/>
+          <div className={classes.secondaryTextSkeleton}/>
         </div>
       </div>
-      <div className={classes.mediaSkeleton}></div>
+      <div className={classes.mediaSkeleton}/>
     </div>
   )
 }
