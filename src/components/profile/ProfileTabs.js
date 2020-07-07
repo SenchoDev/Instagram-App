@@ -22,7 +22,7 @@ function ProfileTabs({ user, isOwner }) {
             classes={{ indicator: classes.tabsIndicator }}
           >
             <Tab
-              icon={<span className={classes.postIconLarge} />}
+              icon={<span className={classes.postsIconLarge} />}
               label="POSTS"
               classes={{
                 root: classes.tabRoot,
@@ -32,7 +32,7 @@ function ProfileTabs({ user, isOwner }) {
             />
             {isOwner && (
               <Tab
-                icon={<span className={classes.savedIcon} />}
+                icon={<span className={classes.savedIconLarge} />}
                 label="SAVED"
                 classes={{
                   root: classes.tabRoot,

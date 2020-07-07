@@ -1003,7 +1003,8 @@ export const useEditProfilePageStyles = makeStyles(theme => ({
     [theme.breakpoints.up("sm")]: {
       gridTemplateColumns: "minmax(220px, max-content) auto"
     },
-    border: "1px solid #dbdbdb"
+    border: "1px solid #dbdbdb",
+    maxWidth: "935px !important"
   },
   permanentDrawerPaper: {
     borderRight: "1px solid #dbdbdb !important",
