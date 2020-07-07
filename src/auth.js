@@ -17,11 +17,10 @@ firebase.initializeApp({
   storageBucket: "instagram-senco.appspot.com",
   messagingSenderId: "1013670512523",
   appId: "1:1013670512523:web:cc9161ff9e506dcbb9518e",
-  measurementId: "G-GVPKNG3ZD1"
+  measurementId: "G-GVPKNG3ZD1",
 });
 
 export const AuthContext = React.createContext();
-
 
 function AuthProvider({ children }) {
   const [authState, setAuthState] = React.useState({ status: "loading" });

@@ -13,7 +13,7 @@ import { AuthContext } from "./auth";
 
 function App() {
   const { authState } = React.useContext(AuthContext);
-  console.log({authState})
+  console.log({ authState });
   const history = useHistory();
   const location = useLocation();
   const prevLocation = React.useRef(location);

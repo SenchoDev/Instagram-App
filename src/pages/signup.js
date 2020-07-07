@@ -21,6 +21,7 @@ function SignUpPage() {
     const { name, value } = event.target;
     setValues((prev) => ({ ...prev, [name]: value }));
   }
+
   async function handleSubmit(event) {
     event.preventDefault();
     await signUpWithEmailAndPassword(values);
@@ -28,7 +29,7 @@ function SignUpPage() {
   }
 
   return (
-    <>
+    <React.Fragment>
       <SEO title="Sign up" />
       <section className={classes.section}>
         <article>
@@ -115,7 +116,7 @@ function SignUpPage() {
           </Card>
         </article>
       </section>
-    </>
+    </React.Fragment>
   );
 }
 
