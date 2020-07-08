@@ -14,7 +14,7 @@ function SignUpPage() {
   const classes = useSignUpPageStyles();
   const { register, handleSubmit, formState, errors } = useForm({ mode: 'onBlur' });
   const { signUpWithEmailAndPassword } = React.useContext(AuthContext);
-  const [ error, setError ] = React.useState()
+  const [ error, setError ] = React.useState("")
 
   const history = useHistory();
 
@@ -26,10 +26,20 @@ function SignUpPage() {
 
   async function onSubmit(data){
     try {
+      setError("")
       await signUpWithEmailAndPassword(data);
       history.push("/");
     } catch (error) {
       console.error('Error signing up', error);
+      //setError(error.message)
+      handleError(error)
+    }
+  }
+
+  function handleError(error){
+    if(error.message.includes("users_username_key")){
+      setError('Username already taken')
+    } else if(error.code.includes('auth')){
       setError(error.message)
     }
   }
@@ -45,6 +55,8 @@ function SignUpPage() {
       <CheckCircleOutline style={{color: '#ccc', height: 50, width: 30}}/>
     </InputAdornment>
   )
+
+  async function validateUsername(username)
 
 
   return (
@@ -110,6 +122,7 @@ function SignUpPage() {
                   required: true,
                   minLength: 5,
                   maxLength: 20,
+                  validate: async (input) => await validateUsername(input),
                   // ACCEPT ONLY LOWERVASE/UPPERCASE LETTERS, NUMBER, PERIODS & UNDERSCORES
                   pattern: /^[a-zA-Z0-9_.]*$/
                 })}
@@ -169,7 +182,7 @@ function SignUpPage() {
   );
 }
 
-function AuthError({ error }){
+export function AuthError({ error }){
   return Boolean(error) && (
     <Typography align="center" gutterBottom variant="body2" style={{ color: 'red'}}>
       {error}
