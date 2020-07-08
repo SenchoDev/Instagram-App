@@ -12,8 +12,9 @@ import isEmail from "validator/lib/isEmail";
 
 function SignUpPage() {
   const classes = useSignUpPageStyles();
-  const { register, handleSubmit, formState } = useForm({ mode: 'onBlur' });
+  const { register, handleSubmit, formState, errors } = useForm({ mode: 'onBlur' });
   const { signUpWithEmailAndPassword } = React.useContext(AuthContext);
+  const [ error, setError ] = React.useState()
 
   const history = useHistory();
 
@@ -23,11 +24,14 @@ function SignUpPage() {
   //   history.push("/");
   // }
 
-  function onSubmit(data){
-    console.log({data});
-     //   event.preventDefault();
-  //   await signUpWithEmailAndPassword(values);
-  //   history.push("/");
+  async function onSubmit(data){
+    try {
+      await signUpWithEmailAndPassword(data);
+      history.push("/");
+    } catch (error) {
+      console.error('Error signing up', error);
+      setError(error.message)
+    }
   }
   
   const errorIcon = (
@@ -74,6 +78,9 @@ function SignUpPage() {
                   required: true,
                   validate: (input) => isEmail(input),
                 })}
+                InputProps={{
+                  endAdornment: errors.email ? errorIcon : formState.touched.email && validIcon
+                }}
                 fullWidth
                 variant="filled"
                 label="Email"
@@ -88,6 +95,9 @@ function SignUpPage() {
                   minLength: 5,
                   maxLength: 20,
                 })}
+                InputProps={{
+                  endAdornment: errors.name ? errorIcon : formState.touched.name && validIcon
+                }}
                 fullWidth
                 variant="filled"
                 label="Full Name"
@@ -103,6 +113,9 @@ function SignUpPage() {
                   // ACCEPT ONLY LOWERVASE/UPPERCASE LETTERS, NUMBER, PERIODS & UNDERSCORES
                   pattern: /^[a-zA-Z0-9_.]*$/
                 })}
+                InputProps={{
+                  endAdornment: errors.username ? errorIcon : formState.touched.username && validIcon
+                }}
                 fullWidth
                 variant="filled"
                 label="Username"
@@ -116,6 +129,9 @@ function SignUpPage() {
                   required: true,
                   minLength: 6,
                 })}
+                InputProps={{
+                  endAdornment: errors.password ? errorIcon : formState.touched.password && validIcon
+                }}
                 fullWidth
                 variant="filled"
                 label="Password"
@@ -135,6 +151,7 @@ function SignUpPage() {
                 Sign Up
               </Button>
             </form>
+            <AuthError error={error} />
           </Card>
           <Card className={classes.loginCard}>
             <Typography align="right" variant="body2">
@@ -150,6 +167,14 @@ function SignUpPage() {
       </section>
     </React.Fragment>
   );
+}
+
+function AuthError({ error }){
+  return Boolean(error) && (
+    <Typography align="center" gutterBottom variant="body2" style={{ color: 'red'}}>
+      {error}
+    </Typography>
+  )
 }
 
 export default SignUpPage;
