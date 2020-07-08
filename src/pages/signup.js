@@ -1,32 +1,47 @@
 import React from "react";
 import { useSignUpPageStyles } from "../styles";
 import SEO from "../components/shared/Seo";
-import { Card, Typography, TextField, Button } from "@material-ui/core";
+import { Card, Typography, TextField, Button, InputAdornment } from "@material-ui/core";
 import { LoginWithFacebook } from "./login";
 import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../auth";
+import { useForm } from "react-hook-form";
+import { HighlightOff, CheckCircleOutline } from '@material-ui/icons'
+ 
+import isEmail from "validator/lib/isEmail";
 
 function SignUpPage() {
   const classes = useSignUpPageStyles();
+  const { register, handleSubmit, formState } = useForm({ mode: 'onBlur' });
   const { signUpWithEmailAndPassword } = React.useContext(AuthContext);
-  const [values, setValues] = React.useState({
-    email: "",
-    name: "",
-    username: "",
-    password: "",
-  });
+
   const history = useHistory();
 
-  function handleChange(event) {
-    const { name, value } = event.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
-  }
+  // async function handleSubmit(event) {
+  //   event.preventDefault();
+  //   await signUpWithEmailAndPassword(values);
+  //   history.push("/");
+  // }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    await signUpWithEmailAndPassword(values);
-    history.push("/");
+  function onSubmit(data){
+    console.log({data});
+     //   event.preventDefault();
+  //   await signUpWithEmailAndPassword(values);
+  //   history.push("/");
   }
+  
+  const errorIcon = (
+    <InputAdornment>
+      <HighlightOff style={{color: 'red', height: 50, width: 30}}/>
+    </InputAdornment>
+  )
+
+  const validIcon = (
+    <InputAdornment>
+      <CheckCircleOutline style={{color: '#ccc', height: 50, width: 30}}/>
+    </InputAdornment>
+  )
+
 
   return (
     <React.Fragment>
@@ -52,10 +67,13 @@ function SignUpPage() {
               </div>
               <div className={classes.orLine} />
             </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <TextField
                 name="email"
-                onChange={handleChange}
+                inputRef={register({
+                  required: true,
+                  validate: (input) => isEmail(input),
+                })}
                 fullWidth
                 variant="filled"
                 label="Email"
@@ -65,7 +83,11 @@ function SignUpPage() {
               />
               <TextField
                 name="name"
-                onChange={handleChange}
+                inputRef={register({
+                  required: true,
+                  minLength: 5,
+                  maxLength: 20,
+                })}
                 fullWidth
                 variant="filled"
                 label="Full Name"
@@ -74,7 +96,13 @@ function SignUpPage() {
               />
               <TextField
                 name="username"
-                onChange={handleChange}
+                inputRef={register({
+                  required: true,
+                  minLength: 5,
+                  maxLength: 20,
+                  // ACCEPT ONLY LOWERVASE/UPPERCASE LETTERS, NUMBER, PERIODS & UNDERSCORES
+                  pattern: /^[a-zA-Z0-9_.]*$/
+                })}
                 fullWidth
                 variant="filled"
                 label="Username"
@@ -84,7 +112,10 @@ function SignUpPage() {
               />
               <TextField
                 name="password"
-                onChange={handleChange}
+                inputRef={register({
+                  required: true,
+                  minLength: 6,
+                })}
                 fullWidth
                 variant="filled"
                 label="Password"
@@ -94,6 +125,7 @@ function SignUpPage() {
                 autoComplete="new-password"
               />
               <Button
+                disabled={!formState.isValid || formState.isSubmitting}
                 variant="contained"
                 fullWidth
                 color="primary"
