@@ -9,12 +9,15 @@ import { useForm } from "react-hook-form";
 import { HighlightOff, CheckCircleOutline } from '@material-ui/icons'
  
 import isEmail from "validator/lib/isEmail";
+import { useApolloClient } from "@apollo/react-hooks";
+import { CHECK_IF_USERNAME_TAKEN } from "../graphql/queries";
 
 function SignUpPage() {
   const classes = useSignUpPageStyles();
   const { register, handleSubmit, formState, errors } = useForm({ mode: 'onBlur' });
   const { signUpWithEmailAndPassword } = React.useContext(AuthContext);
-  const [ error, setError ] = React.useState("")
+  const [ error, setError ] = React.useState("");
+  const client =  useApolloClient()
 
   const history = useHistory();
 
@@ -56,7 +59,15 @@ function SignUpPage() {
     </InputAdornment>
   )
 
-  async function validateUsername(username)
+  async function validateUsername(username){
+    const variables = { username }
+    const response = await client.query({
+      query: CHECK_IF_USERNAME_TAKEN,
+      variables
+    })
+    const isUsernameValid = response.data.users.length === 0;
+    return isUsernameValid;
+  }
 
 
   return (
