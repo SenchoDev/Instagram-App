@@ -10,11 +10,15 @@ import SignUpPage from "./pages/signup";
 import NotFoundPage from "./pages/not-found";
 import PostModal from "./components/post/PostModal";
 import { AuthContext } from "./auth";
+import { useSubscription } from '@apollo/react-hooks'
+
+export const UserContext = React.createContext()
 
 function App() {
   const { authState } = React.useContext(AuthContext);
-  console.log({ authState });
   const isAuth = authState.status === "in";
+  const userId = isAuth ? authState.user.uid : null;
+  const variables = { userId }
   const history = useHistory();
   const location = useLocation();
   const prevLocation = React.useRef(location);
