@@ -16,39 +16,54 @@ import FacebookIconWhite from "../images/facebook-icon-white.png";
 import { AuthContext } from "../auth";
 import isEmail from "validator/lib/isEmail";
 import { useApolloClient } from "@apollo/react-hooks";
-import { GET_USER_EMAIL } from "../graphql/queries"
+import { GET_USER_EMAIL } from "../graphql/queries";
+import { AuthError } from "./signup";
 
 function LoginPage() {
   const classes = useLoginPageStyles();
-  const { register, handleSubmit, watch, formState} = useForm({ mode: "onBlur" });
+  const { register, handleSubmit, watch, formState } = useForm({
+    mode: "onBlur",
+  });
   const [showPassword, setPasswordVisibility] = React.useState(false);
-  const hasPassword = Boolean(watch('password'));
+  const [error, setError] = React.useState("");
+  const hasPassword = Boolean(watch("password"));
   const { logInWithEmailAndPassword } = React.useContext(AuthContext);
 
   const history = useHistory();
-  const client = useApolloClient()
+  const client = useApolloClient();
 
-  async function onSubmit({input, password}) {
-    if(!isEmail(input)){
-      input = await getUserEmail(input)
+  async function onSubmit({ input, password }) {
+    try {
+      setError("");
+      if (!isEmail(input)) {
+        input = await getUserEmail(input);
+      }
+      await logInWithEmailAndPassword(input, password);
+      setTimeout(() => history.push("/"), 0);
+    } catch (error) {
+      console.error("Errror loggin in", error);
+      handleError(error);
     }
-    logInWithEmailAndPassword(input, password);
-    history.push('/');
   }
 
-  async function getUserEmail(input){
+  async function getUserEmail(input) {
     const variables = { input };
     const response = await client.query({
       query: GET_USER_EMAIL,
-      variables
-    })
-    
-    const userEmail = response.data.users[0].email || "no@email.com";
+      variables,
+    });
+    const userEmail = response.data.users[0]?.email || "no@email.com";
     return userEmail;
   }
 
-  function togglePasswordVisibility(){
-    setPasswordVisibility(prev => !prev);
+  function togglePasswordVisibility() {
+    setPasswordVisibility((prev) => !prev);
+  }
+
+  function handleError(error) {
+    if (error.code.includes("auth")) {
+      setError(error.message);
+    }
   }
 
   return (
@@ -80,12 +95,12 @@ function LoginPage() {
                 })}
                 InputProps={{
                   endAdornment: hasPassword && (
-                    <InputAdornment style={{ marginRight: '-10px'}}>
+                    <InputAdornment style={{ marginRight: "-10px" }}>
                       <Button onClick={togglePasswordVisibility}>
-                        {showPassword ? "Hide" : "Show" }
+                        {showPassword ? "Hide" : "Show"}
                       </Button>
                     </InputAdornment>
-                  )
+                  ),
                 }}
                 fullWidth
                 variant="filled"
@@ -93,9 +108,9 @@ function LoginPage() {
                 margin="dense"
                 className={classes.textField}
                 autoComplete="current-password"
-                type={showPassword ? "text": "password"}
+                type={showPassword ? "text" : "password"}
               />
-              <Button 
+              <Button
                 disabled={!formState.isValid || formState.isSubmitting}
                 variant="contained"
                 fullWidth
@@ -116,6 +131,7 @@ function LoginPage() {
               <div className={classes.orLine} />
             </div>
             <LoginWithFacebook color="secondary" iconColor="blue" />
+            <AuthError error={error} />
             <Button fullWidth color="secondary">
               <Typography variant="caption">Forgot password?</Typography>
             </Button>
@@ -138,18 +154,39 @@ function LoginPage() {
 
 export function LoginWithFacebook({ color, iconColor, variant }) {
   const classes = useLoginPageStyles();
+  const { logInWithGoogle } = React.useContext(AuthContext);
   const facebookIcon =
     iconColor === "blue" ? FacebookIconBlue : FacebookIconWhite;
 
+  const [error, setError] = React.useState("");
+  const history = useHistory(); 
+  async function handleLogInWithGoogle() {
+    try {
+      await logInWithGoogle();
+      history.push('/')
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    }
+  }
+
   return (
-    <Button fullWidth color={color} variant={variant}>
-      <img
-        src={facebookIcon}
-        alt="facebook icon"
-        className={classes.facebookIcon}
-      />
-      Log In with Facebook
-    </Button>
+    <React.Fragment>
+      <Button
+        fullWidth
+        color={color}
+        variant={variant}
+        onClick={handleLogInWithGoogle}
+      >
+        <img
+          src={facebookIcon}
+          alt="facebook icon"
+          className={classes.facebookIcon}
+        />
+        Log In with Facebook
+      </Button>
+      <AuthError error={error} />
+    </React.Fragment>
   );
 }
 
