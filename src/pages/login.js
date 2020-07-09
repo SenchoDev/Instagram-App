@@ -9,19 +9,42 @@ import {
   Typography,
   InputAdornment,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FacebookIconBlue from "../images/facebook-icon-blue.svg";
 import FacebookIconWhite from "../images/facebook-icon-white.png";
+import { AuthContext } from "../auth";
+import isEmail from "validator/lib/isEmail";
+import { useApolloClient } from "@apollo/react-hooks";
+import { GET_USER_EMAIL } from "../graphql/queries"
 
 function LoginPage() {
   const classes = useLoginPageStyles();
   const { register, handleSubmit, watch, formState} = useForm({ mode: "onBlur" });
   const [showPassword, setPasswordVisibility] = React.useState(false);
-  const hasPassword = Boolean(watch('password'))
+  const hasPassword = Boolean(watch('password'));
+  const { logInWithEmailAndPassword } = React.useContext(AuthContext);
 
-  function onSubmit(data) {
-    console.log({ data });
+  const history = useHistory();
+  const client = useApolloClient()
+
+  async function onSubmit({input, password}) {
+    if(!isEmail(input)){
+      input = await getUserEmail(input)
+    }
+    logInWithEmailAndPassword(input, password);
+    history.push('/');
+  }
+
+  async function getUserEmail(input){
+    const variables = { input };
+    const response = await client.query({
+      query: GET_USER_EMAIL,
+      variables
+    })
+    
+    const userEmail = response.data.users[0].email || "no@email.com";
+    return userEmail;
   }
 
   function togglePasswordVisibility(){
