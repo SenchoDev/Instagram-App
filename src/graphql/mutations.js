@@ -27,3 +27,28 @@ export const CREATE_USER = gql`
     }
   }
 `;
+
+export const EDIT_USER = gql`
+  mutation editUser(
+    $id: uuid!
+    $name: String!
+    $username: String!
+    $website: String!
+    $bio: String!
+    $phoneNumber: String!
+  ) {
+    update_users(
+      where: { id: { _eq: $id } }
+      _set: {
+        name: $name
+        username: $username
+        website: $website
+        email: $website
+        bio: $bio
+        phone_number: $phoneNumber
+      }
+    ) {
+      affected_rows
+    }
+  }
+`;
