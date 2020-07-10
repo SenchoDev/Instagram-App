@@ -59,7 +59,7 @@ function AuthProvider({ children }) {
     const data = await firebase.auth().signInWithPopup(provider);
     if((data.additionalUserInfo.isNewUser)){
       const { uid, displayName, email, photoURL} = data.user;
-      const username = `${displayName.replace(/\s+/g, "").toLowerCase()}${uid.slice(-5)}`
+      const username = `${displayName.replace(/\s+/g, "")}${uid.slice(-5)}`
       const variables = {
         userId: uid,
         name: displayName,

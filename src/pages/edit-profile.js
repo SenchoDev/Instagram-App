@@ -10,25 +10,31 @@ import {
   ListItem,
   ListItemText,
   Typography,
-  TextField
+  TextField,
 } from "@material-ui/core";
 import { Menu } from "@material-ui/icons";
-import { defaultCurrentUser } from "../data";
 import ProfilePicture from "../components/shared/ProfilePicture";
+import { UserContext } from "../App";
+import { useQuery } from "@apollo/react-hooks";
+import { GET_EDIT_USER_PROFILE } from "../graphql/queries";
+import LoadingScreen from "../components/shared/LoadingScreen";
 
 function EditProfilePage({ history }) {
+  const { currentUserId } = React.useContext(UserContext);
+  const variables = { id: currentUserId };
+  const { data, loading } = useQuery(GET_EDIT_USER_PROFILE, { variables });
   const classes = useEditProfilePageStyles();
   const path = history.location.pathname;
   const [showDrawer, setDrawer] = React.useState(false);
 
   function handleToggleDrawer() {
-    setDrawer(prev => !prev);
+    setDrawer((prev) => !prev);
   }
 
   function handleSelected(index) {
     switch (index) {
       case 0:
-        return path.includes("edit");
+   return path.includes("edit");
       default:
         break;
     }
@@ -53,9 +59,10 @@ function EditProfilePage({ history }) {
     "Manage Contacts",
     "Privacy and Security",
     "Login Activity",
-    "Emails from Instagram"
+    "Emails from Instagram",
   ];
-
+  if (loading) return <LoadingScreen />;
+  
   const drawer = (
     <List>
       {options.map((option, index) => (
@@ -66,16 +73,14 @@ function EditProfilePage({ history }) {
           onClick={() => handleListClick(index)}
           classes={{
             selected: classes.listItemSelected,
-            button: classes.listItemButton
+            button: classes.listItemButton,
           }}
         >
           <ListItemText primary={option} />
         </ListItem>
       ))}
     </List>
-  );
-
-  return (
+  ); return (
     <Layout title="Edit Profile">
       <section className={classes.section}>
         <IconButton
@@ -107,7 +112,7 @@ function EditProfilePage({ history }) {
               open
               classes={{
                 paper: classes.permanentDrawerPaper,
-                root: classes.permanentDrawerRoot
+                root: classes.permanentDrawerRoot,
               }}
             >
               {drawer}
@@ -115,7 +120,7 @@ function EditProfilePage({ history }) {
           </Hidden>
         </nav>
         <main>
-          {path.includes("edit") && <EditUserInfo user={defaultCurrentUser} />}
+          {path.includes("edit") && <EditUserInfo user={data.users_by_pk} />}
         </main>
       </section>
     </Layout>
@@ -123,12 +128,10 @@ function EditProfilePage({ history }) {
 }
 
 function EditUserInfo({ user }) {
-  const classes = useEditProfilePageStyles();
-
-  return (
+  const classes = useEditProfilePageStyles(); return (
     <section className={classes.container}>
       <div className={classes.pictureSectionItem}>
-        <ProfilePicture size={38} user={user} />
+        <ProfilePicture size={38}  image={user.profile_image} />
         <div className={classes.justifySelfStart}>
           <Typography className={classes.typography}>
             {user.username}
@@ -187,9 +190,7 @@ function EditUserInfo({ user }) {
 }
 
 function SectionItem({ type = "text", text, formItem }) {
-  const classes = useEditProfilePageStyles();
-
-  return (
+  const classes = useEditProfilePageStyles(); return (
     <div className={classes.sectionItemWrapper}>
       <aside>
         <Hidden xsDown>
@@ -208,7 +209,7 @@ function SectionItem({ type = "text", text, formItem }) {
         type={type}
         className={classes.textField}
         inputProps={{
-          className: classes.textFieldInput
+          className: classes.textFieldInput,
         }}
       />
     </div>
