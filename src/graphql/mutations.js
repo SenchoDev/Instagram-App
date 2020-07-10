@@ -35,6 +35,7 @@ export const EDIT_USER = gql`
     $username: String!
     $website: String!
     $bio: String!
+    $email: String!
     $phoneNumber: String!
   ) {
     update_users(
@@ -43,8 +44,8 @@ export const EDIT_USER = gql`
         name: $name
         username: $username
         website: $website
-        email: $website
         bio: $bio
+        email: $email
         phone_number: $phoneNumber
       }
     ) {
@@ -52,3 +53,4 @@ export const EDIT_USER = gql`
     }
   }
 `;
+

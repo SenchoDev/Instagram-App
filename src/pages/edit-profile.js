@@ -320,7 +320,7 @@ function SectionItem({ type = "text", text, formItem, inputRef, name, error }) {
         type={type}
         className={classes.textField}
         inputProps={{
-          className: classes.textFieldInput
+          className: classes.textFieldInput,
         }}
       />
     </div>
