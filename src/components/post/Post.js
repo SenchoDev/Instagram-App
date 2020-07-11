@@ -19,18 +19,23 @@ import {
   TextField
 } from "@material-ui/core";
 import OptionsDialog from "../shared/OptionsDialog";
-import { defaultPost } from "../../data";
+// import { defaultPost } from "../../data";
 import PostSkeleton from './PostSkeleton';
+import { useSubscription } from "@apollo/react-hooks";
+import { GET_POST } from "../../graphql/subscriptions";
 
-function Post() {
+function Post({ postId }) {
   const classes = usePostStyles();
-  const [loading, setLoading] = React.useState(true) 
+  // const [loading, setLoading] = React.useState(true);
+  const variables = { postId }
+  const { data, loading } = useSubscription(GET_POST, { variables })
   const [showOptionsDialog, setOptionsDialog] = React.useState(false);
-  const { id, media, likes, user, caption, comments } = defaultPost;
   
   
-  setTimeout(() => setLoading(false), 2000)
+  //setTimeout(() => setLoading(false), 2000)
   if (loading) return <PostSkeleton/>
+  
+  const { id, media, likes, user, caption, comments, created_at } = data.posts_by_pk;
   return (
     <div className={classes.postContainer}>
       <article className={classes.article}>
@@ -59,28 +64,14 @@ function Post() {
           <Typography className={classes.likes} variant="subtitle2">
             <span>{likes === 1 ? "1 like" : `${likes} likes`}</span>
           </Typography>
-          <div className={classes.postCaptionContainer}>
-            <Typography
-              variant="body2"
-              component="span"
-              className={classes.postCaption}
-              dangerouslySetInnerHTML={{ __html: caption }}
-            />
+          <div style={{
+            overflowY: 'scroll',
+            padding: '16px 12px !important',
+            height: '100%',
+          }}>
+            <AuthorCaption user={user} createdAt={created_at} caption={caption}/>
             {comments.map(comment => (
-              <div key={comment.id}>
-                <Link to={`/${comment.user.username}`}>
-                  <Typography
-                    variant="subtitle2"
-                    component="span"
-                    className={classes.commentUsername}
-                  >
-                    {comment.user.username}
-                  </Typography>{" "}
-                  <Typography variant="body2" component="span">
-                    {comment.contet}
-                  </Typography>
-                </Link>
-              </div>
+              <UserComment key={comment.id} comment={comment}/>
             ))}
           </div>
           <Typography color="textSecondary" className={classes.datePosted}>
@@ -99,6 +90,14 @@ function Post() {
       )}
     </div>
   );
+}
+
+function AuthorCaption({ user, caption, createdAt}){
+  
+}
+
+function UserComment(){
+
 }
 
 function LikeButton() {
