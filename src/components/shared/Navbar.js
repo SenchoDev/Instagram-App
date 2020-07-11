@@ -12,7 +12,7 @@ import {
 import NotificationTooltip from "../notification/NotificationTooltip";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logo.png";
-import { defaultCurrentUser } from "../../data";
+// import { defaultCurrentUser } from "../../data";
 import {
   LoadingIcon,
   AddIcon,
@@ -28,6 +28,7 @@ import { useNProgress } from "@tanem/react-nprogress";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { SEARCH_USERS } from "../../graphql/queries";
 import { UserContext } from "../../App";
+import AddPostDialog from "../post/AddPostDialog";
 
 function Navbar({ minimalNavbar }) {
   const classes = useNavbarStyles();
@@ -157,6 +158,9 @@ function Links({ path }) {
   const classes = useNavbarStyles();
   const [showList, setList] = React.useState(false);
   const [showTooltip, setTooltip] = React.useState(true);
+  const inputRef = React.useRef();
+  const [media, setMedia] = React.useState(null);
+  const [showAddPostDialog, setAddPostDialog] = React.useState();
 
   React.useEffect(() => {
     const timeout = setTimeout(handleHideTooltip, 5000);
@@ -177,12 +181,29 @@ function Links({ path }) {
     setList(false);
   }
 
+  function openFileInput(){
+    inputRef.current.click();
+  }
+  
+  function handleAddPost(event){
+    setMedia(event.target.files[0]);
+    setAddPostDialog(true);
+  }
+  
+  function handleClose(){
+    setAddPostDialog(false);
+  }
+
   return (
     <div className={classes.linksContainer}>
       {showList && <NotificationList handleHideList={handleHideList} />}
       <div className={classes.linksWrapper}>
+        {showAddPostDialog && (
+          <AddPostDialog media={media} handleClose={handleClose}/>
+        )}
         <Hidden xsDown>
-          <AddIcon />
+          <input type="file" style={{ display: 'none'}} ref={inputRef} onChange={handleAddPost}/>
+          <AddIcon onClick={openFileInput}/>
         </Hidden>
         <Link to="/">{path === "/" ? <HomeActiveIcon /> : <HomeIcon />}</Link>
         <Link to="/explore">
@@ -198,10 +219,10 @@ function Links({ path }) {
             {showList ? <LikeActiveIcon /> : <LikeIcon />}
           </div>
         </RedTooltip>
-        <Link to={`/${defaultCurrentUser.username}`}>
+        <Link to={`/${me.username}`}>
           <div
             className={
-              path === `/${defaultCurrentUser.username}`
+              path === `/${me.username}`
                 ? classes.profileActive
                 : ""
             }
