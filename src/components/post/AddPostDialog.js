@@ -86,7 +86,7 @@ function AddPostDialog({ media, handleClose }) {
       </Paper>
       <TextField 
       fullWidth
-      placeholder="Loaction"
+      placeholder="Location"
       InputProps={{
         classes:{
           root: classes.root,

@@ -266,7 +266,8 @@ function Comment({ postId }) {
       postId,
       userId: currentUserId
     }
-    createComment({ variables })
+    createComment({ variables });
+    setContent('')
   }
 
   return (
