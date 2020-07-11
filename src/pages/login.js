@@ -163,7 +163,7 @@ export function LoginWithFacebook({ color, iconColor, variant }) {
   async function handleLogInWithGoogle() {
     try {
       await logInWithGoogle();
-      history.push('/')
+      setTimeout(() => history.push('/'), 0);
     } catch (error) {
       console.log(error);
       setError(error.message);

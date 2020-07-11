@@ -12,7 +12,7 @@ import {
 import NotificationTooltip from "../notification/NotificationTooltip";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logo.png";
-import { defaultCurrentUser, getDefaultUser } from "../../data";
+import { defaultCurrentUser } from "../../data";
 import {
   LoadingIcon,
   AddIcon,
@@ -25,6 +25,9 @@ import {
 } from "../../icons";
 import NotificationList from "../notification/NotificationList";
 import { useNProgress } from "@tanem/react-nprogress";
+import { useLazyQuery } from "@apollo/react-hooks";
+import { SEARCH_USERS } from "../../graphql/queries";
+import { UserContext } from "../../App";
 
 function Navbar({ minimalNavbar }) {
   const classes = useNavbarStyles();
@@ -72,15 +75,23 @@ function Logo() {
 function Search({ history }) {
   const classes = useNavbarStyles();
   const [results, setResults] = React.useState([]);
-  const [loading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [query, setQuery] = React.useState("");
+  const [searchUsers, { data }] = useLazyQuery(SEARCH_USERS);
 
   const hasResults = Boolean(query) && results.length > 0;
 
   React.useEffect(() => {
     if (!query.trim()) return;
-    setResults(Array.from({ length: 5 }, () => getDefaultUser()));
-  }, [query]);
+    setLoading(true);
+    const variables = { query: `%${query}%` };
+    searchUsers({ variables })
+    if (data){
+      setResults(data.users);
+      setLoading(false)
+    }
+    //setResults(Array.from({ length: 5 }, () => getDefaultUser()));
+  }, [query, data, searchUsers]);
 
   function handleClearInput() {
     setQuery("");
@@ -94,7 +105,7 @@ function Search({ history }) {
         open={hasResults}
         title={
           hasResults && (
-            <Grid className={classes.resultContainer} conntainer>
+            <Grid conntainer className={classes.resultContainer} >
               {results.map((result) => (
                 <Grid
                   item
@@ -142,6 +153,7 @@ function Search({ history }) {
 }
 
 function Links({ path }) {
+  const { me } = React.useContext(UserContext)
   const classes = useNavbarStyles();
   const [showList, setList] = React.useState(false);
   const [showTooltip, setTooltip] = React.useState(true);
@@ -195,7 +207,7 @@ function Links({ path }) {
             }
           ></div>
           <Avatar
-            src={defaultCurrentUser.profile_image}
+            src={me.profile_image}
             className={classes.profileImage}
           />
         </Link>

@@ -21,17 +21,31 @@ export const GET_USER_EMAIL = gql`
 `;
 
 export const GET_EDIT_USER_PROFILE = gql`
-  query getEditUserProfile($id: uuid!){
-  users_by_pk(id: $id) {
-    id
-    name
-    username
-    bio
-    email
-    profile_image
-    website
-    phone_number
+  query getEditUserProfile($id: uuid!) {
+    users_by_pk(id: $id) {
+      id
+      name
+      username
+      bio
+      email
+      profile_image
+      website
+      phone_number
+    }
   }
-}
+`;
 
-`
+export const SEARCH_USERS = gql`
+  query searchUsers($query: String) {
+    users(
+      where: {
+        _or: [{ username: { _ilike: $query } }, { name: { _ilike: $query } }]
+      }
+    ) {
+      id
+      username
+      name
+      profile_image
+    }
+  }
+`;
