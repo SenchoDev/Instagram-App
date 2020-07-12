@@ -35,6 +35,7 @@ function ProfilePage() {
   });
 
   if (loading) return <LoadingScreen />;
+  console.log(data)
   const [user] = data.users;
   const isOwner = user.id === currentUserId;
 

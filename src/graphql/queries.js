@@ -74,6 +74,22 @@ export const GET_USER_PROFILE = gql`
           count
         }
       }
+      saved_posts {
+        post {
+          id
+          media
+          likes_aggregate {
+            aggregate {
+              count
+            }
+          }
+          comments_aggregate {
+            aggregate {
+              count
+            }
+          }
+        }
+      }
       posts {
         id
         media
