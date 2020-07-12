@@ -1,19 +1,25 @@
 import React from "react";
 import { useNotificationListStyles } from "../../styles";
-import { defaultNotifications } from "../../data";
 import { Avatar, Typography, Grid } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import FollowButton from "../shared/FollowButton";
 import useOutsideClick from "@rooks/use-outside-click";
 
-function NotificationList({ handleHideList }) {
+function NotificationList({ handleHideList, notifications, currentUserId}) {
   const listContainerRef = React.useRef();
   const classes = useNotificationListStyles();
   useOutsideClick(listContainerRef, handleHideList);
 
+  React.useEffect(() => {
+    const variables = {
+      userId: currentUserId,
+      lastChecked: new Date().toISOString()
+    }
+  }, [])
+
   return (
     <Grid ref={listContainerRef} className={classes.listContainer} container>
-      {defaultNotifications.map((notification) => {
+      {notifications.map((notification) => {
         const isLike = notification.type === "like";
         const isFollow = notification.type === "follow";
         return (
@@ -36,8 +42,8 @@ function NotificationList({ handleHideList }) {
                   color="textSecondary"
                   className={classes.typography}
                 >
-                  {isLike && `likes your photo. 4d`}
-                  {isFollow && `started following you. 5d`}
+                  {isLike && `likes your photo. ${notification.created_at}`}
+                  {isFollow && `started following you. ${notification.created_at}`}
                 </Typography>
               </div>
             </div>
@@ -47,7 +53,7 @@ function NotificationList({ handleHideList }) {
                   <Avatar src={notification.post.media} alt="post cover" />
                 </Link>
               )}
-              {isFollow && <FollowButton />}
+              {isFollow && <FollowButton id={notification.user.id} />}
             </div>
           </Grid>
         );
