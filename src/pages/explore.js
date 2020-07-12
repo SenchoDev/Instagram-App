@@ -7,7 +7,7 @@ function ExplorePage() {
 
   return <Layout>
     <ExploreSuggestions />
-    <ExploreGrid/>
+    {/*<ExploreGrid/>*/}
   </Layout>
 }
 

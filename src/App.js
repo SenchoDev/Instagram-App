@@ -65,6 +65,8 @@ function App() {
         <Route exact path="/:username" component={ProfilePage} />
         <Route exact path="/p/:postId" component={PostPage} />
         <Route path="/accounts/edit" component={EditProfilePage} />
+        <Route path="/accounts/login" component={LoginPage} />
+        <Route path="/accounts/emailsignup" component={SignUpPage} />
         <Route path="*" component={NotFoundPage} />
       </Switch>
       {isModalOpen && <Route exact path="/p/:postId" component={PostModal} />}
