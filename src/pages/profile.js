@@ -1,7 +1,7 @@
 import React from "react";
 import { useProfilePageStyles } from "../styles";
 import Layout from "../components/shared/Layout";
-import { defaultCurrentUser } from "../data";
+// import { defaultCurrentUser } from "../data";
 import {
   Hidden,
   Card,
@@ -15,15 +15,28 @@ import {
   Avatar,
 } from "@material-ui/core";
 import ProfilePicture from "../components/shared/ProfilePicture";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { GearIcon } from "../icons";
-import ProfileTabs from '../components/profile/ProfileTabs'
+import ProfileTabs from "../components/profile/ProfileTabs";
 import { AuthContext } from "../auth";
+import { useQuery } from "@apollo/react-hooks";
+import { GET_USER_PROFILE } from "../graphql/queries";
+import LoadingScreen from "../components/shared/LoadingScreen";
+import { UserContext } from "../App";
 
 function ProfilePage() {
+  const { username } = useParams();
+  const { currentUserId } = React.useContext(UserContext);
   const classes = useProfilePageStyles();
   const [showOptionsMenu, setOptionsMenu] = React.useState(false);
-  const isOwner = true;
+  const variables = { username };
+  const { data, loading } = useQuery(GET_USER_PROFILE, {
+    variables,
+  });
+
+  if (loading) return <LoadingScreen />;
+  const [user] = data.users;
+  const isOwner = user.id === currentUserId;
 
   function handleOptionsMenuClick() {
     setOptionsMenu(true);
@@ -32,22 +45,22 @@ function ProfilePage() {
   function handleCloseMenu() {
     setOptionsMenu(false);
   }
+
+
   return (
-    <Layout
-      title={`${defaultCurrentUser.name} (@${defaultCurrentUser.username})`}
-    >
+    <Layout title={`${user.name} (@${user.username})`}>
       <div className={classes.container}>
         <Hidden xsDown>
           <Card className={classes.cardLarge}>
-            <ProfilePicture isOwner={isOwner} />
+            <ProfilePicture isOwner={isOwner} image={user.profile_image}/>
             <CardContent className={classes.cardContentLarge}>
               <ProfileNameSection
-                user={defaultCurrentUser}
+                user={user}
                 isOwner={isOwner}
                 handleOptionsMenuClick={handleOptionsMenuClick}
               />
-              <PostCountSection user={defaultCurrentUser} />
-              <NameBioSection user={defaultCurrentUser} />
+              <PostCountSection user={user} />
+              <NameBioSection user={user} />
             </CardContent>
           </Card>
         </Hidden>
@@ -55,20 +68,20 @@ function ProfilePage() {
           <Card className={classes.cardSmall}>
             <CardContent>
               <section className={classes.sectionSmall}>
-                <ProfilePicture size={77} isOwner={isOwner} />
+                <ProfilePicture size={77} isOwner={isOwner} image={user.profile_image} />
                 <ProfileNameSection
-                  user={defaultCurrentUser}
+                  user={user}
                   isOwner={isOwner}
                   handleOptionsMenuClick={handleOptionsMenuClick}
                 />
               </section>
-              <NameBioSection user={defaultCurrentUser} />
+              <NameBioSection user={user} />
             </CardContent>
-            <PostCountSection user={defaultCurrentUser} />
+            <PostCountSection user={user} />
           </Card>
         </Hidden>
         {showOptionsMenu && <OptionsMenu handleCloseMenu={handleCloseMenu} />}
-        <ProfileTabs user={defaultCurrentUser} isOwner={isOwner}/>
+        <ProfileTabs user={user} isOwner={isOwner} />
       </div>
     </Layout>
   );
@@ -200,57 +213,61 @@ function UnfollowDialog({ onClose, user }) {
 function PostCountSection({ user }) {
   const classes = useProfilePageStyles();
   const options = ["posts", "followers", "following"];
-  return <React.Fragment>
-    <Hidden smUp>
-      <Divider/>
-    </Hidden>
-    <section className={classes.followingSection}>
-      {options.map(option => (
-        <div className={classes.followingText} key={option}>
-          <Typography className={classes.followingCount}>
-            {user[option].length}
-          </Typography>
-          <Hidden xsDown>
-            <Typography>{option}</Typography>
-          </Hidden>
-          <Hidden smUp>
-            <Typography color="textSecondary">{option}</Typography>
-          </Hidden>
-        </div>
-      ))}
-    </section>
+  return (
+    <React.Fragment>
+      <Hidden smUp>
+        <Divider />
+      </Hidden>
+      <section className={classes.followingSection}>
+        {options.map((option) => (
+          <div className={classes.followingText} key={option}>
+            <Typography className={classes.followingCount}>
+              {user[`${option}_aggregate`].aggregate.count}
+            </Typography>
+            <Hidden xsDown>
+              <Typography>{option}</Typography>
+            </Hidden>
+            <Hidden smUp>
+              <Typography color="textSecondary">{option}</Typography>
+            </Hidden>
+          </div>
+        ))}
+      </section>
 
-    <Hidden smUp>
-    <Divider/>
-    </Hidden>
-  </React.Fragment>;
+      <Hidden smUp>
+        <Divider />
+      </Hidden>
+    </React.Fragment>
+  );
 }
 
-function NameBioSection( { user } ) {
+function NameBioSection({ user }) {
   const classes = useProfilePageStyles();
-  return(
+  return (
     <section className={classes.section}>
       <Typography className={classes.typography}>{user.name}</Typography>
-      <Typography >{user.bio}</Typography>
+      <Typography>{user.bio}</Typography>
       <a href={user.website} target="_blank" rel="noopener noreferrer">
-        <Typography color="secondary" className={classes.typography}>{user.website}</Typography>
+        <Typography color="secondary" className={classes.typography}>
+          {user.website}
+        </Typography>
       </a>
     </section>
-  )
+  );
 }
 
 function OptionsMenu({ handleCloseMenu }) {
   const classes = useProfilePageStyles();
-  const { signOut } = React.useContext(AuthContext)
+  const { signOut } = React.useContext(AuthContext);
   const [showLogOutMessage, setLogOutMessage] = React.useState(false);
-  const history = useHistory()
+  const history = useHistory();
 
   function handleLogOutClick() {
     setLogOutMessage(true);
     setTimeout(() => {
       signOut();
-      history.push('/accounts/login')
-    }, 2000)
+      history.push("/accounts/login");
+    }, 2000);
   }
   return (
     <Dialog

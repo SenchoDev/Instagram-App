@@ -58,6 +58,7 @@ export const GET_USER_PROFILE = gql`
       username
       website
       bio
+      profile_image
       posts_aggregate {
         aggregate {
           count
