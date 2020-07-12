@@ -19,7 +19,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { GearIcon } from "../icons";
 import ProfileTabs from "../components/profile/ProfileTabs";
 import { AuthContext } from "../auth";
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation, useApolloClient } from "@apollo/react-hooks";
 import { GET_USER_PROFILE } from "../graphql/queries";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { UserContext } from "../App";
@@ -33,6 +33,7 @@ function ProfilePage() {
   const variables = { username };
   const { data, loading } = useQuery(GET_USER_PROFILE, {
     variables,
+    fetchPolicy: "no-cache"
   });
 
   if (loading) return <LoadingScreen />;
@@ -313,10 +314,12 @@ function OptionsMenu({ handleCloseMenu }) {
   const { signOut } = React.useContext(AuthContext);
   const [showLogOutMessage, setLogOutMessage] = React.useState(false);
   const history = useHistory();
+  const client = useApolloClient()
 
   function handleLogOutClick() {
     setLogOutMessage(true);
-    setTimeout(() => {
+    setTimeout(async () => {
+      await client.clearStore();
       signOut();
       history.push("/accounts/login");
     }, 2000);
