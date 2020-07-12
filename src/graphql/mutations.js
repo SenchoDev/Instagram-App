@@ -184,3 +184,33 @@ export const FOLLOW_USER = gql`
     }
   }
 `;
+
+export const UNFOLLOW_USER = gql`
+  mutation unfollowUser($userIdToFollow: uuid!, $currentUserId: uuid!) {
+    delete_followers(
+      where: {
+        user_id: { _eq: $userIdToFollow }
+        profile_id: { _eq: $currentUserId }
+      }
+    ) {
+      affected_rows
+    }
+    delete_following(
+      where: {
+        user_id: { _eq: $currentUserId }
+        profile_id: { _eq: $userIdToFollow }
+      }
+    ) {
+      affected_rows
+    }
+    delete_notifications(
+      where: {
+        user_id: { _eq: $currentUserId }
+        profile_id: { _eq: $userIdToFollow }
+        type: { _eq: "follow" }
+      }
+    ) {
+      affected_rows
+    }
+  }
+`;

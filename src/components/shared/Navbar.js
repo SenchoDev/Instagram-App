@@ -106,7 +106,7 @@ function Search({ history }) {
         open={hasResults}
         title={
           hasResults && (
-            <Grid conntainer className={classes.resultContainer}>
+            <Grid container className={classes.resultContainer}>
               {results.map((result) => (
                 <Grid
                   item

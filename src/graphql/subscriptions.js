@@ -9,7 +9,19 @@ export const ME = gql`
       username
       profile_image
       last_checked
-      notifications(order_by: { created_at: desc}){
+      followers {
+        user {
+          id
+          user_id
+        }
+      }
+      following {
+        user {
+          id
+          user_id
+        }
+      }
+      notifications(order_by: { created_at: desc }) {
         id
         type
         created_at
@@ -27,9 +39,8 @@ export const ME = gql`
   }
 `;
 
-
 export const GET_POST = gql`
- subscription getPost($postId: uuid!) {
+  subscription getPost($postId: uuid!) {
     posts_by_pk(id: $postId) {
       id
       caption
@@ -47,7 +58,7 @@ export const GET_POST = gql`
           count
         }
       }
-      likes{
+      likes {
         id
         user_id
       }
