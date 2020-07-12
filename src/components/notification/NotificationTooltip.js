@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavbarStyles } from "../../styles";
-import { Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";;
 
 function NotificationTooltip({ notifications }) {
   const classes = useNavbarStyles();
   const followCount = countNotifications("follow");
   const likeCount = countNotifications("like");
+  
 
   function countNotifications(notificationType) {
     return notifications.filter(({ type }) => type === notificationType).length;

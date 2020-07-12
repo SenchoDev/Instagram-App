@@ -230,7 +230,7 @@ function Links({ path }) {
           onOpen={handleHideTooltip}
           title={<NotificationTooltip notifications={newNotifications} />}
         >
-          <div className={classes.notifications} onClick={handleToggleList}>
+          <div className={hasNotifications ? classes.notifications : ""} onClick={handleToggleList}>
             {showList ? <LikeActiveIcon /> : <LikeIcon />}
           </div>
         </RedTooltip>

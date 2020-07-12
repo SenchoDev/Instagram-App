@@ -4,18 +4,23 @@ import { Avatar, Typography, Grid } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import FollowButton from "../shared/FollowButton";
 import useOutsideClick from "@rooks/use-outside-click";
+import { useMutation } from "@apollo/react-hooks";
+import { CHECK_NOTIFICATIONS } from "../../graphql/mutations";
+import { formatDateToNowShort } from "../../utils/formatDate"
 
 function NotificationList({ handleHideList, notifications, currentUserId}) {
   const listContainerRef = React.useRef();
   const classes = useNotificationListStyles();
   useOutsideClick(listContainerRef, handleHideList);
+  const [checkNotifications] = useMutation(CHECK_NOTIFICATIONS)
 
   React.useEffect(() => {
     const variables = {
       userId: currentUserId,
       lastChecked: new Date().toISOString()
     }
-  }, [])
+    checkNotifications({ variables });
+  }, [currentUserId, checkNotifications])
 
   return (
     <Grid ref={listContainerRef} className={classes.listContainer} container>
@@ -42,8 +47,8 @@ function NotificationList({ handleHideList, notifications, currentUserId}) {
                   color="textSecondary"
                   className={classes.typography}
                 >
-                  {isLike && `likes your photo. ${notification.created_at}`}
-                  {isFollow && `started following you. ${notification.created_at}`}
+                  {isLike && `likes your photo. ${formatDateToNowShort(notification.created_at)}`}
+                  {isFollow && `started following you. ${formatDateToNowShort(notification.created_at)}`}
                 </Typography>
               </div>
             </div>
