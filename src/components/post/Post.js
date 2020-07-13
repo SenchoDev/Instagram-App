@@ -114,7 +114,7 @@ function Post({ postId }) {
         </div>
       </article>
       {showOptionsDialog && (
-        <OptionsDialog onClose={() => setOptionsDialog(false)} />
+        <OptionsDialog  postId={id} authorId={user.id} onClose={() => setOptionsDialog(false)} />
       )}
     </div>
   );
