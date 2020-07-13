@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { isThisYear, formatDistanceStrict } from "date-fns/esm";
+import { isThisYear, formatDistanceStrict, formatDistanceToNow } from "date-fns/esm";
 
 export function formatPostDate(date) {
   // MARCH 23
@@ -17,4 +17,8 @@ export function formatDateToNowShort(date) {
     .split(" ")
     .map((s, i) => (i === 1 ? s[0] : s))
     .join("");
+}
+
+export function formatDateToNow(date){
+  return formatDistanceToNow(new Date(date), { addSuffix: true }).toUpperCase();
 }

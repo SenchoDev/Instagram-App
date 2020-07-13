@@ -21,25 +21,30 @@ import {
 import HTMLEllipsis from "react-lines-ellipsis/lib/html";
 import FollowSuggestions from "../shared/FollowSuggestions";
 import OptionsDialog from "../shared/OptionsDialog";
+import { formatDateToNow } from "../../utils/formatDate";
+import Img from 'react-graceful-image'
 
 function FeedPost({ post, index }) {
   const classes = useFeedPostStyles();
   const [showCaption, setCaption] = React.useState(false);
   const [showOptionsDialog, setOptionsDialog] = React.useState(false);
-  const { id, media, likes, user, caption, comments } = post;
+  const { id, media, user, caption, comments, comments_aggregate, likes_aggregate, saved_posts, location, created_at} = post;
   const showFollowSuggestions = index === 1;
+  const likesCount = likes_aggregate.aggregate.count;
+  const commentsCount = comments_aggregate.aggregate.count;
+
 
   return (
     <React.Fragment>
       <article className={classes.article} style={{ marginBottom: showFollowSuggestions && 30}}>
         {/* Feed Post Header */}
         <div className={classes.postHeader}>
-          <UserCard user={user} />
+          <UserCard user={user} location={location} />
           <MoreIcon className={classes.moreIcon} onClick={() => setOptionsDialog(true)}/>
         </div>
         {/* Feed Post Image */}
         <div>
-          <img src={media} alt="Post media" className={classes.image} />
+          <Img src={media} alt="Post media" className={classes.image} />
         </div>
         {/* Feed Post Buttons */}
         <div className={classes.postButtonsWrapper}>
@@ -52,7 +57,7 @@ function FeedPost({ post, index }) {
             <SaveButton />
           </div>
           <Typography className={classes.likes} variant="subtitle2">
-            <span>{likes === 1 ? "1 like" : `${likes} likes`}</span>
+            <span>{likesCount === 1 ? "1 like" : `${likesCount} likes`}</span>
           </Typography>
           <div className={showCaption ? classes.expanded : classes.collapsed}>
             <Link to={`/${user.username}`}>
@@ -94,7 +99,7 @@ function FeedPost({ post, index }) {
               variant="body2"
               component="div"
             >
-              View all {comments.length} comments
+              View all {commentsCount} comments
             </Typography>
           </Link>
           {comments.map((comment) => (
@@ -114,7 +119,7 @@ function FeedPost({ post, index }) {
             </div>
           ))}
           <Typography color="textSecondary" className={classes.datePosted}>
-            5 DAYS AGO
+            {formatDateToNow(created_at)}
           </Typography>
         </div>
         <Hidden xsDown>
@@ -123,7 +128,7 @@ function FeedPost({ post, index }) {
         </Hidden>
       </article>
       {showFollowSuggestions && <FollowSuggestions />}
-      {showOptionsDialog && <OptionsDialog onClose={() => setOptionsDialog(false)}/>}
+      {showOptionsDialog && <OptionsDialog authorId={user.id} postId={id} onClose={() => setOptionsDialog(false)}/>}
     </React.Fragment>
   );
 }

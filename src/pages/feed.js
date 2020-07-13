@@ -16,48 +16,44 @@ const FeedPost = React.lazy(() => import("../components/feed/FeedPost"));
 
 function FeedPage() {
   const classes = useFeedPageStyles();
-  const [isEndOfFeed, setEndOfFeed] = React.useState(false);
   const { me, feedIds } = React.useContext(UserContext);
+  const [isEndOfFeed, setEndOfFeed] = React.useState(false);
   const variables = { feedIds, limit: 2 };
   const { data, loading, fetchMore } = useQuery(GET_FEED, { variables });
   const isPageBottom = usePageBottom();
 
-  function handleUpdateQuery(prev, { fetchMoreResult }){
-    if( fetchMoreResult.posts.length === 0){
-      setEndOfFeed(true)
-      return prev
+  const handleUpdateQuery = React.useCallback((prev, { fetchMoreResult }) => {
+    if (fetchMoreResult.posts.length === 0) {
+      setEndOfFeed(true);
+      return prev;
     }
-    return { posts: [...prev.posts, ...fetchMoreResult.posts]}
-  }
+    return { posts: [...prev.posts, ...fetchMoreResult.posts] };
+  }, []);
 
   React.useEffect(() => {
     if (!isPageBottom || !data) return;
     const lastTimestamp = data.posts[data.posts.length - 1].created_at;
-    const variables = {
-      feedIds,
-      limit: 2,
-      lastTimestamp,
-    };
+    const variables = { limit: 2, feedIds, lastTimestamp };
     fetchMore({
       variables,
-      updateQuery: handleUpdateQuery
-    })
-  }, [isPageBottom, data, fetchMore, handleUpdateQuery]);
+      updateQuery: handleUpdateQuery,
+    });
+  }, [isPageBottom, data, fetchMore, handleUpdateQuery, feedIds]);
 
   if (loading) return <LoadingScreen />;
 
   return (
     <Layout>
       <div className={classes.container}>
-        {/*Feed Posts */}
+        {/* Feed Posts */}
         <div>
           {data.posts.map((post, index) => (
             <React.Suspense key={post.id} fallback={<FeedPostSkeleton />}>
-              <FeedPost key={post.id} index={index} post={post} />
+              <FeedPost index={index} post={post} />
             </React.Suspense>
           ))}
         </div>
-        {/*Sidebar */}
+        {/* Sidebar */}
         <Hidden smDown>
           <div className={classes.sidebarContainer}>
             <div className={classes.sidebarWrapper}>

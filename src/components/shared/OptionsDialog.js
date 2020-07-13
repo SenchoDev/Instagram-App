@@ -53,7 +53,7 @@ function OptionsDialog({onClose, postId, authorId}) {
       </Button>}
       <Divider />
       <Button className={classes.button}>
-        <Link to={`/p/${defaultPost}`} >
+        <Link to={`/p/${postId}`} >
           Go to post
         </Link>
       </Button>

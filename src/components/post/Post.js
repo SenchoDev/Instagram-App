@@ -33,6 +33,7 @@ import {
   CREATE_COMMENT,
 } from "../../graphql/mutations";
 import { formatDateToNowShort, formatPostDate } from "../../utils/formatDate";
+import Img from 'react-graceful-image'
 
 function Post({ postId }) {
   const classes = usePostStyles();
@@ -71,7 +72,7 @@ function Post({ postId }) {
         </div>
         {/* Post Image */}
         <div className={classes.postImage}>
-          <img src={media} alt="Post media" className={classes.image} />
+          <Img src={media} alt="Post media" className={classes.image} />
         </div>
         {/* Post Buttons */}
         <div className={classes.postButtonsWrapper}>
