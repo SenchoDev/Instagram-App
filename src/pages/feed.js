@@ -4,25 +4,47 @@ import Layout from "../components/shared/Layout";
 import UserCard from "../components/shared/UserCard";
 // import FeedPost from "../components/feed/FeedPost";
 import FeedSideSuggestions from "../components/feed/FeedSideSuggestions";
-import { getDefaultPost } from "../data";
 import { Hidden } from "@material-ui/core";
-import LoadingScreen from '../components/shared/LoadingScreen'
+import LoadingScreen from "../components/shared/LoadingScreen";
 import { LoadingLargeIcon } from "../icons";
-import FeedPostSkeleton from '../components/feed/FeedPostSkeleton'
+import FeedPostSkeleton from "../components/feed/FeedPostSkeleton";
 import { UserContext } from "../App";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_FEED } from "../graphql/queries";
-const FeedPost = 
- React.lazy(() => import('../components/feed/FeedPost'))
+import usePageBottom from "../utils/usePageBottom";
+const FeedPost = React.lazy(() => import("../components/feed/FeedPost"));
 
 function FeedPage() {
   const classes = useFeedPageStyles();
-  const [isEndOfFeed] = React.useState(false);
+  const [isEndOfFeed, setEndOfFeed] = React.useState(false);
   const { me, feedIds } = React.useContext(UserContext);
-  const variables = { feedIds, limit: 2}
-  const {data, loading} = useQuery(GET_FEED, { variables })
+  const variables = { feedIds, limit: 2 };
+  const { data, loading, fetchMore } = useQuery(GET_FEED, { variables });
+  const isPageBottom = usePageBottom();
 
-  if(loading) return <LoadingScreen/>
+  function handleUpdateQuery(prev, { fetchMoreResult }){
+    if( fetchMoreResult.posts.length === 0){
+      setEndOfFeed(true)
+      return prev
+    }
+    return { posts: [...prev.posts, ...fetchMoreResult.posts]}
+  }
+
+  React.useEffect(() => {
+    if (!isPageBottom || !data) return;
+    const lastTimestamp = data.posts[data.posts.length - 1].created_at;
+    const variables = {
+      feedIds,
+      limit: 2,
+      lastTimestamp,
+    };
+    fetchMore({
+      variables,
+      updateQuery: handleUpdateQuery
+    })
+  }, [isPageBottom, data, fetchMore, handleUpdateQuery]);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <Layout>
@@ -30,7 +52,7 @@ function FeedPage() {
         {/*Feed Posts */}
         <div>
           {data.posts.map((post, index) => (
-            <React.Suspense key={post.id} fallback={<FeedPostSkeleton/>}>
+            <React.Suspense key={post.id} fallback={<FeedPostSkeleton />}>
               <FeedPost key={post.id} index={index} post={post} />
             </React.Suspense>
           ))}
@@ -44,7 +66,7 @@ function FeedPage() {
             </div>
           </div>
         </Hidden>
-        {!isEndOfFeed && <LoadingLargeIcon/>}
+        {!isEndOfFeed && <LoadingLargeIcon />}
       </div>
     </Layout>
   );
