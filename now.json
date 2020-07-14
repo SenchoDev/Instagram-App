@@ -1,7 +1,6 @@
 {
   "version": 2,
   "name": "instagram",
-  "alias": "instagram-senco",
   "builds": [
     {
       "src": "package.json",
