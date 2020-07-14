@@ -1,5 +1,4 @@
 import React from "react";
-
 import { createEditor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import { useAddPostDialogStyles } from "../../styles";
@@ -25,32 +24,28 @@ import { CREATE_POST } from "../../graphql/mutations";
 const initialValue = [
   {
     type: "paragraph",
-    children: [
-      {
-        text: "",
-      },
-    ],
+    children: [{ text: "" }],
   },
 ];
 
 function AddPostDialog({ media, handleClose }) {
   const classes = useAddPostDialogStyles();
-  const editor = React.useMemo(() => withReact(createEditor()), []);
   const { me, currentUserId } = React.useContext(UserContext);
+  const editor = React.useMemo(() => withReact(createEditor()), []);
   const [value, setValue] = React.useState(initialValue);
-  const [location, setLocation] = React.useState('');
-  const [createPost] = useMutation(CREATE_POST)
+  const [location, setLocation] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
+  const [createPost] = useMutation(CREATE_POST);
 
-  async function handleSharePost(){
+  async function handleSharePost() {
     setSubmitting(true);
     const url = await handleImageUpload(media);
     const variables = {
       userId: currentUserId,
       location,
       caption: serialize({ children: value }),
-      media: url
-    }
+      media: url,
+    };
     await createPost({ variables });
     setSubmitting(false);
     window.location.reload();
@@ -64,7 +59,12 @@ function AddPostDialog({ media, handleClose }) {
           <Typography align="center" variant="body1" className={classes.title}>
             New Post
           </Typography>
-          <Button color="primary" className={classes.share} disabled={submitting} onClick={handleSharePost}>
+          <Button
+            color="primary"
+            className={classes.share}
+            disabled={submitting}
+            onClick={handleSharePost}
+          >
             Share
           </Button>
         </Toolbar>
@@ -75,31 +75,35 @@ function AddPostDialog({ media, handleClose }) {
         <Slate
           editor={editor}
           value={value}
-          onChange={(newValue) => setValue(newValue)}
+          onChange={(value) => setValue(value)}
         >
           <Editable
             className={classes.editor}
             placeholder="Write your caption..."
           />
         </Slate>
-        <Avatar src={URL.createObjectURL(media)} className={classes.avatarLarge} variant="square"/>
+        <Avatar
+          src={URL.createObjectURL(media)}
+          className={classes.avatarLarge}
+          variant="square"
+        />
       </Paper>
-      <TextField 
-      fullWidth
-      placeholder="Location"
-      InputProps={{
-        classes:{
-          root: classes.root,
-          input: classes.input,
-          underline: classes.underline
-        },
-        startAdornment: (
-          <InputAdornment>
-            <PinDrop/>
-          </InputAdornment>
-        )
-      }}
-      onChange={event => setLocation(event.target.value)}
+      <TextField
+        fullWidth
+        placeholder="Location"
+        InputProps={{
+          classes: {
+            root: classes.root,
+            input: classes.input,
+            underline: classes.underline,
+          },
+          startAdornment: (
+            <InputAdornment>
+              <PinDrop />
+            </InputAdornment>
+          ),
+        }}
+        onChange={(event) => setLocation(event.target.value)}
       />
     </Dialog>
   );
