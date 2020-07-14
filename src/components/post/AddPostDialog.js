@@ -70,7 +70,7 @@ function AddPostDialog({ media, handleClose }) {
         </Toolbar>
       </AppBar>
       <Divider />
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} style={{paddingTop: '60px'}} >
         <Avatar src={me.profile_image} />
         <Slate
           editor={editor}
