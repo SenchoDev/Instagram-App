@@ -1,5 +1,10 @@
 # Instagram App
 
+## About App
+
+I took my skills to another level where i decided to re-create instagram app and its main functionalites. Its was very challenging but the grind paid off. 
+App was built with React(Context API & React Hooks), GraphQl & Apollo, Cloudinary, Hasura with PostgreSQl DB, Firebase Auth, Material UI and over 10+ other libraries.
+
 ## Routes (Pages)
 
 - / (feed page)
