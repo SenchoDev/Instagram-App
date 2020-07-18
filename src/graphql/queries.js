@@ -121,6 +121,7 @@ export const SUGGEST_USERS = gql`
         _or: [
           { id: { _in: $followerIds } }
           { created_at: { _gt: $createdAt } }
+          { created_at: {_lt: $createdAt}} 
         ]
       }
     ) {

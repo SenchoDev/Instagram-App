@@ -4,7 +4,7 @@ import Layout from "../components/shared/Layout";
 import UserCard from "../components/shared/UserCard";
 // import FeedPost from "../components/feed/FeedPost";
 import FeedSideSuggestions from "../components/feed/FeedSideSuggestions";
-import { Hidden } from "@material-ui/core";
+import { Hidden, Typography } from "@material-ui/core";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { LoadingLargeIcon } from "../icons";
 import FeedPostSkeleton from "../components/feed/FeedPostSkeleton";
@@ -62,7 +62,19 @@ function FeedPage() {
             </div>
           </div>
         </Hidden>
-        {!isEndOfFeed && <LoadingLargeIcon />}
+        {!isEndOfFeed && data.posts.length > 0 ?  <LoadingLargeIcon /> : null}
+
+        {data.posts.length === 0 && (
+          <Typography
+            color="primary"
+            variant="subtitle2"
+            component="h2"
+            gutterBottom
+            align="center"
+          >
+            Find or explore new People
+          </Typography>
+        )}
       </div>
     </Layout>
   );
