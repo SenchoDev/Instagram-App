@@ -46,7 +46,7 @@ function App() {
       <Switch>
         <Route path="/accounts/login" component={LoginPage} />
         <Route path="/accounts/emailsignup" component={SignUpPage} />
-        <Redirect to="/" />
+        <Redirect to="/accounts/login" />
       </Switch>
     );
   }
@@ -56,10 +56,12 @@ function App() {
   const currentUserId = me.id;
   const followingIds = me.following.map(({ user }) => user.id);
   const followerIds = me.followers.map(({ user }) => user.id);
-  const feedIds = [...followingIds, currentUserId]
+  const feedIds = [...followingIds, currentUserId];
 
   return (
-    <UserContext.Provider value={{ me, currentUserId, followerIds, followingIds, feedIds }}>
+    <UserContext.Provider
+      value={{ me, currentUserId, followingIds, followerIds, feedIds }}
+    >
       <Switch location={isModalOpen ? prevLocation.current : location}>
         <Route exact path="/" component={FeedPage} />
         <Route path="/explore" component={ExplorePage} />
