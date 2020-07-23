@@ -33,9 +33,11 @@ function AuthProvider({ children }) {
         const idTokenResult = await user.getIdTokenResult();
         const hasuraClaim =
           idTokenResult.claims["https://hasura.io/jwt/claims"];
+          
 
         if (hasuraClaim) {
           setAuthState({ status: "in", user, token });
+          
         } else {
           // Check if refresh is required.
           const metadataRef = firebase
@@ -47,6 +49,7 @@ function AuthProvider({ children }) {
             // Force refresh to pick up the latest custom claims changes.
             const token = await user.getIdToken(true);
             setAuthState({ status: "in", user, token });
+        
           });
         }
       } else {

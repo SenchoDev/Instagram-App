@@ -46,7 +46,7 @@ function App() {
       <Switch>
         <Route path="/accounts/login" component={LoginPage} />
         <Route path="/accounts/emailsignup" component={SignUpPage} />
-        <Redirect to="/accounts/login" />
+        <Redirect to="/" />
       </Switch>
     );
   }
