@@ -63,7 +63,6 @@ function FeedPage() {
           </div>
         </Hidden>
         {!isEndOfFeed && data.posts.length > 0 ?  <LoadingLargeIcon /> : null}
-
         {data.posts.length === 0 && (
           <Typography
             color="primary"

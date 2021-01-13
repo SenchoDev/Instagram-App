@@ -93,6 +93,7 @@ function FollowSuggestionsItem({ user }) {
       </div>
     </div>
   );
+  
 }
 
 export default FollowSuggestions;
